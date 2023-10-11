@@ -6,9 +6,10 @@ services:
     environment:
       POSTGRES_PASSWORD: temporal
       POSTGRES_USER: temporal
-    image: postgres:13
+    image: postgres:${POSTGRES_IMG}
     ports:
       - 5432:5432
+    restart: always
   postgres-exporter:
     container_name: postgres-exporter
     image: prometheuscommunity/postgres-exporter:${POSTGRES_EXPORTER_IMG}
@@ -19,16 +20,16 @@ services:
       - PG_EXPORTER_INCLUDE_DATABASES=temporal,temporal_visibility
     ports:
       - "9187:9187"
-  pgadmin:
-    container_name: temporal-pgadmin
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
-    ports:
-      - "5050:80"
-    restart: unless-stopped
+  # pgadmin:
+  # container_name: temporal-pgadmin
+  # image: dpage/pgadmin4
+  # environment:
+  # PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+  # PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+  # PGADMIN_CONFIG_SERVER_MODE: 'False'
+  # ports:
+  # - "5050:80"
+  # restart: unless-stopped
 networks:
   default:
     external: true

@@ -320,13 +320,14 @@ add_custom_search_attributes() {
     # TODO: Remove CustomStringField
 # @@@SNIPSTART add-custom-search-attributes-for-testing-command
     temporal operator search-attribute create --namespace "${DEFAULT_NAMESPACE}" \
-        --name CustomKeywordField --type Keyword \
-        --name CustomStringField --type Text \
-        --name CustomTextField --type Text \
-        --name CustomIntField --type Int \
-        --name CustomDatetimeField --type Datetime \
-        --name CustomDoubleField --type Double \
-        --name CustomBoolField --type Bool
+        --name DataSourceId --type Keyword
+        # --name CustomKeywordField --type Keyword \
+        # --name CustomStringField --type Text \
+        # --name CustomTextField --type Text \
+        # --name CustomIntField --type Int \
+        # --name CustomDatetimeField --type Datetime \
+        # --name CustomDoubleField --type Double \
+        # --name CustomBoolField --type Bool
 # @@@SNIPEND
 }
 

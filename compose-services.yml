@@ -11,8 +11,8 @@ services:
   temporal-history:
     <<: *logging
     container_name: temporal-history
-#    depends_on:
-#      - temporal-admin-tools
+    #    depends_on:
+    #      - temporal-admin-tools
     environment:
       - DB=postgres12
       - DB_PORT=${POSTGRES_DEFAULT_PORT}
@@ -23,9 +23,9 @@ services:
       - SERVICES=history
       - USE_INTERNAL_FRONTEND=true
       - LOG_LEVEL=error
-#      - BIND_ON_IP=0.0.0.0
+      #      - BIND_ON_IP=0.0.0.0
       - PROMETHEUS_ENDPOINT=0.0.0.0:8000
-#      - TEMPORAL_BROADCAST_ADDRESS=temporal-history
+      #      - TEMPORAL_BROADCAST_ADDRESS=temporal-history
       - NUM_HISTORY_SHARDS=2048
     image: temporalio/server:${TEMPORAL_SERVER_IMG}
     ports:
@@ -33,15 +33,15 @@ services:
         target: 7234
       - published: 8000
         target: 8000
-    restart: on-failure
+    restart: always
     volumes:
       - ./dynamicconfig:/etc/temporal/config/dynamicconfig
       - ./template/my_config_template.yaml:/etc/temporal/config/config_template.yaml
   temporal-history2:
     <<: *logging
     container_name: temporal-history2
-#    depends_on:
-#      - temporal-admin-tools
+    #    depends_on:
+    #      - temporal-admin-tools
     environment:
       - DB=postgres12
       - DB_PORT=${POSTGRES_DEFAULT_PORT}
@@ -64,7 +64,7 @@ services:
         target: 7238
       - published: 8005
         target: 8005
-    restart: on-failure
+    restart: always
     volumes:
       - ./dynamicconfig:/etc/temporal/config/dynamicconfig
       - ./template/my_config_template.yaml:/etc/temporal/config/config_template.yaml
@@ -91,7 +91,7 @@ services:
         target: 7235
       - published: 8001
         target: 8001
-    restart: on-failure
+    restart: always
     volumes:
       - ./dynamicconfig:/etc/temporal/config/dynamicconfig
       - ./template/my_config_template.yaml:/etc/temporal/config/config_template.yaml
@@ -121,7 +121,7 @@ services:
         target: 7239
       - published: 8006
         target: 8006
-    restart: on-failure
+    restart: always
     volumes:
       - ./dynamicconfig:/etc/temporal/config/dynamicconfig
       - ./template/my_config_template.yaml:/etc/temporal/config/config_template.yaml
@@ -149,7 +149,7 @@ services:
         target: 7237
       - published: 8002
         target: 8002
-    restart: on-failure
+    restart: always
     volumes:
       - ./dynamicconfig:/etc/temporal/config/dynamicconfig
       - ./template/my_config_template.yaml:/etc/temporal/config/config_template.yaml
@@ -180,7 +180,7 @@ services:
         target: 7236
       - published: 8004
         target: 8004
-    restart: on-failure
+    restart: always
     volumes:
       - ./dynamicconfig:/etc/temporal/config/dynamicconfig
       - ./template/my_config_template.yaml:/etc/temporal/config/config_template.yaml
@@ -207,7 +207,7 @@ services:
         target: 7231
       - published: 8007
         target: 8007
-    restart: on-failure
+    restart: always
     volumes:
       - ./dynamicconfig:/etc/temporal/config/dynamicconfig
       - ./template/my_config_template.yaml:/etc/temporal/config/config_template.yaml
@@ -235,7 +235,7 @@ services:
         target: 7232
       - published: 8003
         target: 8003
-    restart: on-failure
+    restart: always
     volumes:
       - ./dynamicconfig:/etc/temporal/config/dynamicconfig
       - ./template/my_config_template.yaml:/etc/temporal/config/config_template.yaml
@@ -281,7 +281,7 @@ services:
     <<: *logging
     container_name: prometheus
     image: prom/prometheus:${PROMETHEUS_IMG}
-    command: --config.file=/etc/prometheus/prometheus.yml --log.level=error
+    command: --config.file=/etc/prometheus/prometheus.yml --log.level=error --storage.tsdb.retention.time=7d
     ports:
       - published: 9090
         target: 9090
@@ -314,9 +314,9 @@ services:
       - type: bind
         source: ./deployment/grafana/provisioning/alerting
         target: /etc/grafana/provisioning/alerting
-      - type: bind
-        source: ./deployment/grafana/provisioning/notifiers
-        target: /etc/grafana/provisioning/notifiers
+      # - type: bind
+      # source: ./deployment/grafana/provisioning/notifiers
+      # target: /etc/grafana/provisioning/notifiers
       - type: bind
         source: ./deployment/grafana/grafana.ini
         target: /etc/grafana/grafana.ini
@@ -343,9 +343,11 @@ services:
         target: 14268
       - published: 14250
         target: 14250
+    environment:
+      - MEMORY_MAX_TRACES=1000
   otel-collector:
     image: otel/opentelemetry-collector:${OTEL_IMG}
-    command: [ "--config=/etc/otel-collector-config.yaml" ]
+    command: ["--config=/etc/otel-collector-config.yaml"]
     volumes:
       - type: bind
         source: ./deployment/otel/otel-config.yaml
@@ -380,7 +382,7 @@ services:
     ports:
       - 9092:9092
     command:
-      - '-port=9092'
+      - "-port=9092"
     volumes:
       - /:/rootfs:ro
       - /var/run/docker.sock:/var/run/docker.sock:rw
@@ -400,7 +402,7 @@ services:
       - type: bind
         source: ./deployment/envoy/envoy.yaml
         target: /etc/envoy/envoy.yaml
-    restart: on-failure
+    restart: always
     depends_on:
       - temporal-admin-tools
       - temporal-frontend
