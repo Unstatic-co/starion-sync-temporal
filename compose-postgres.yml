@@ -6,6 +6,8 @@ services:
     environment:
       POSTGRES_PASSWORD: temporal
       POSTGRES_USER: temporal
+    volumes:
+      - /postgresql-data:/var/lib/postgresql/data
     image: postgres:${POSTGRES_IMG}
     ports:
       - 5432:5432
