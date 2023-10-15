@@ -37,37 +37,37 @@ services:
     volumes:
       - ./dynamicconfig:/etc/temporal/config/dynamicconfig
       - ./template/my_config_template.yaml:/etc/temporal/config/config_template.yaml
-  temporal-history2:
-    <<: *logging
-    container_name: temporal-history2
-    #    depends_on:
-    #      - temporal-admin-tools
-    environment:
-      - DB=postgres12
-      - DB_PORT=${POSTGRES_DEFAULT_PORT}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PWD=${POSTGRES_PWD}
-      - POSTGRES_SEEDS=postgresql
-      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development.yaml
-      - SERVICES=history
-      - NUM_HISTORY_SHARDS=2048
-      - USE_INTERNAL_FRONTEND=true
-      #      - BIND_ON_IP=0.0.0.0
-      - PROMETHEUS_ENDPOINT=0.0.0.0:8005
-      #      - TEMPORAL_BROADCAST_ADDRESS=temporal-history
-      - HISTORY_MEMBERSHIP_PORT=6934
-      - HISTORY_GRPC_PORT=7238
-      - LOG_LEVEL=error
-    image: temporalio/server:${TEMPORAL_SERVER_IMG}
-    ports:
-      - published: 7238
-        target: 7238
-      - published: 8005
-        target: 8005
-    restart: always
-    volumes:
-      - ./dynamicconfig:/etc/temporal/config/dynamicconfig
-      - ./template/my_config_template.yaml:/etc/temporal/config/config_template.yaml
+  # temporal-history2:
+  # <<: *logging
+  # container_name: temporal-history2
+  # #    depends_on:
+  # #      - temporal-admin-tools
+  # environment:
+  # - DB=postgres12
+  # - DB_PORT=${POSTGRES_DEFAULT_PORT}
+  # - POSTGRES_USER=${POSTGRES_USER}
+  # - POSTGRES_PWD=${POSTGRES_PWD}
+  # - POSTGRES_SEEDS=postgresql
+  # - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development.yaml
+  # - SERVICES=history
+  # - NUM_HISTORY_SHARDS=2048
+  # - USE_INTERNAL_FRONTEND=true
+  # #      - BIND_ON_IP=0.0.0.0
+  # - PROMETHEUS_ENDPOINT=0.0.0.0:8005
+  # #      - TEMPORAL_BROADCAST_ADDRESS=temporal-history
+  # - HISTORY_MEMBERSHIP_PORT=6934
+  # - HISTORY_GRPC_PORT=7238
+  # - LOG_LEVEL=error
+  # image: temporalio/server:${TEMPORAL_SERVER_IMG}
+  # ports:
+  # - published: 7238
+  # target: 7238
+  # - published: 8005
+  # target: 8005
+  # restart: always
+  # volumes:
+  # - ./dynamicconfig:/etc/temporal/config/dynamicconfig
+  # - ./template/my_config_template.yaml:/etc/temporal/config/config_template.yaml
   temporal-matching:
     <<: *logging
     container_name: temporal-matching
@@ -95,36 +95,36 @@ services:
     volumes:
       - ./dynamicconfig:/etc/temporal/config/dynamicconfig
       - ./template/my_config_template.yaml:/etc/temporal/config/config_template.yaml
-  temporal-matching2:
-    <<: *logging
-    container_name: temporal-matching2
-    depends_on:
-      - temporal-history
-      - temporal-history2
-    environment:
-      - DB=postgres12
-      - DB_PORT=${POSTGRES_DEFAULT_PORT}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PWD=${POSTGRES_PWD}
-      - POSTGRES_SEEDS=postgresql
-      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development.yaml
-      - SERVICES=matching
-      - PROMETHEUS_ENDPOINT=0.0.0.0:8006
-      - MATCHING_GRPC_PORT=7239
-      - MATCHING_MEMBERSHIP_PORT=6939
-      - NUM_HISTORY_SHARDS=2048
-      - USE_INTERNAL_FRONTEND=true
-      - LOG_LEVEL=error
-    image: temporalio/server:${TEMPORAL_SERVER_IMG}
-    ports:
-      - published: 7239
-        target: 7239
-      - published: 8006
-        target: 8006
-    restart: always
-    volumes:
-      - ./dynamicconfig:/etc/temporal/config/dynamicconfig
-      - ./template/my_config_template.yaml:/etc/temporal/config/config_template.yaml
+  # temporal-matching2:
+  # <<: *logging
+  # container_name: temporal-matching2
+  # depends_on:
+  # - temporal-history
+  # - temporal-history2
+  # environment:
+  # - DB=postgres12
+  # - DB_PORT=${POSTGRES_DEFAULT_PORT}
+  # - POSTGRES_USER=${POSTGRES_USER}
+  # - POSTGRES_PWD=${POSTGRES_PWD}
+  # - POSTGRES_SEEDS=postgresql
+  # - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development.yaml
+  # - SERVICES=matching
+  # - PROMETHEUS_ENDPOINT=0.0.0.0:8006
+  # - MATCHING_GRPC_PORT=7239
+  # - MATCHING_MEMBERSHIP_PORT=6939
+  # - NUM_HISTORY_SHARDS=2048
+  # - USE_INTERNAL_FRONTEND=true
+  # - LOG_LEVEL=error
+  # image: temporalio/server:${TEMPORAL_SERVER_IMG}
+  # ports:
+  # - published: 7239
+  # target: 7239
+  # - published: 8006
+  # target: 8006
+  # restart: always
+  # volumes:
+  # - ./dynamicconfig:/etc/temporal/config/dynamicconfig
+  # - ./template/my_config_template.yaml:/etc/temporal/config/config_template.yaml
   temporal-frontend:
     <<: *logging
     container_name: temporal-frontend
@@ -153,37 +153,37 @@ services:
     volumes:
       - ./dynamicconfig:/etc/temporal/config/dynamicconfig
       - ./template/my_config_template.yaml:/etc/temporal/config/config_template.yaml
-  temporal-frontend2:
-    <<: *logging
-    container_name: temporal-frontend2
-    depends_on:
-      - temporal-matching
-    environment:
-      - DB=postgres12
-      - DB_PORT=${POSTGRES_DEFAULT_PORT}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PWD=${POSTGRES_PWD}
-      - POSTGRES_SEEDS=postgresql
-      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development.yaml
-      - SERVICES=frontend
-      # set different frontend grpc port
-      - FRONTEND_GRPC_PORT=7236
-      # set different membership port than temporal-frontend
-      - FRONTEND_MEMBERSHIP_PORT=6936
-      - PROMETHEUS_ENDPOINT=0.0.0.0:8004
-      - NUM_HISTORY_SHARDS=2048
-      - USE_INTERNAL_FRONTEND=true
-      - LOG_LEVEL=error
-    image: temporalio/server:${TEMPORAL_SERVER_IMG}
-    ports:
-      - published: 7236
-        target: 7236
-      - published: 8004
-        target: 8004
-    restart: always
-    volumes:
-      - ./dynamicconfig:/etc/temporal/config/dynamicconfig
-      - ./template/my_config_template.yaml:/etc/temporal/config/config_template.yaml
+  # temporal-frontend2:
+  # <<: *logging
+  # container_name: temporal-frontend2
+  # depends_on:
+  # - temporal-matching
+  # environment:
+  # - DB=postgres12
+  # - DB_PORT=${POSTGRES_DEFAULT_PORT}
+  # - POSTGRES_USER=${POSTGRES_USER}
+  # - POSTGRES_PWD=${POSTGRES_PWD}
+  # - POSTGRES_SEEDS=postgresql
+  # - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development.yaml
+  # - SERVICES=frontend
+  # # set different frontend grpc port
+  # - FRONTEND_GRPC_PORT=7236
+  # # set different membership port than temporal-frontend
+  # - FRONTEND_MEMBERSHIP_PORT=6936
+  # - PROMETHEUS_ENDPOINT=0.0.0.0:8004
+  # - NUM_HISTORY_SHARDS=2048
+  # - USE_INTERNAL_FRONTEND=true
+  # - LOG_LEVEL=error
+  # image: temporalio/server:${TEMPORAL_SERVER_IMG}
+  # ports:
+  # - published: 7236
+  # target: 7236
+  # - published: 8004
+  # target: 8004
+  # restart: always
+  # volumes:
+  # - ./dynamicconfig:/etc/temporal/config/dynamicconfig
+  # - ./template/my_config_template.yaml:/etc/temporal/config/config_template.yaml
   temporal-internal-frontend:
     <<: *logging
     container_name: temporal-internal-frontend
@@ -216,7 +216,7 @@ services:
     container_name: temporal-worker
     depends_on:
       - temporal-frontend
-      - temporal-frontend2
+      # - temporal-frontend2
     environment:
       - DB=postgres12
       - DB_PORT=${POSTGRES_DEFAULT_PORT}
@@ -244,7 +244,7 @@ services:
     container_name: temporal-admin-tools
     depends_on:
       - temporal-frontend
-      - temporal-frontend2
+      # - temporal-frontend2
     environment:
       - TEMPORAL_CLI_ADDRESS=temporal-loadbalancing:7233
       - TEMPORAL_ADDRESS=temporal-loadbalancing:7233
@@ -406,7 +406,7 @@ services:
     depends_on:
       - temporal-admin-tools
       - temporal-frontend
-      - temporal-frontend2
+      # - temporal-frontend2
 # nginx
 #  temporal-loadbalancing:
 #    <<: *logging
