@@ -26,7 +26,7 @@ services:
       #      - BIND_ON_IP=0.0.0.0
       - PROMETHEUS_ENDPOINT=0.0.0.0:8000
       #      - TEMPORAL_BROADCAST_ADDRESS=temporal-history
-      - NUM_HISTORY_SHARDS=2048
+      - NUM_HISTORY_SHARDS=${NUM_HISTORY_SHARDS}
     image: temporalio/server:${TEMPORAL_SERVER_IMG}
     ports:
       - published: 7234
@@ -50,7 +50,7 @@ services:
   # - POSTGRES_SEEDS=postgresql
   # - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development.yaml
   # - SERVICES=history
-  # - NUM_HISTORY_SHARDS=2048
+  # - NUM_HISTORY_SHARDS=${NUM_HISTORY_SHARDS}
   # - USE_INTERNAL_FRONTEND=true
   # #      - BIND_ON_IP=0.0.0.0
   # - PROMETHEUS_ENDPOINT=0.0.0.0:8005
@@ -82,7 +82,7 @@ services:
       - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development.yaml
       - SERVICES=matching
       - PROMETHEUS_ENDPOINT=0.0.0.0:8001
-      - NUM_HISTORY_SHARDS=2048
+      - NUM_HISTORY_SHARDS=${NUM_HISTORY_SHARDS}
       - USE_INTERNAL_FRONTEND=true
       - LOG_LEVEL=error
     image: temporalio/server:${TEMPORAL_SERVER_IMG}
@@ -112,7 +112,7 @@ services:
   # - PROMETHEUS_ENDPOINT=0.0.0.0:8006
   # - MATCHING_GRPC_PORT=7239
   # - MATCHING_MEMBERSHIP_PORT=6939
-  # - NUM_HISTORY_SHARDS=2048
+  # - NUM_HISTORY_SHARDS=${NUM_HISTORY_SHARDS}
   # - USE_INTERNAL_FRONTEND=true
   # - LOG_LEVEL=error
   # image: temporalio/server:${TEMPORAL_SERVER_IMG}
@@ -140,12 +140,14 @@ services:
       - SERVICES=frontend
       - FRONTEND_GRPC_PORT=7237
       - PROMETHEUS_ENDPOINT=0.0.0.0:8002
-      - NUM_HISTORY_SHARDS=2048
+      - NUM_HISTORY_SHARDS=${NUM_HISTORY_SHARDS}
       - USE_INTERNAL_FRONTEND=true
       - LOG_LEVEL=error
     image: temporalio/server:${TEMPORAL_SERVER_IMG}
+    expose:
+      - 7237
     ports:
-      - published: 7237
+      - published: 7233
         target: 7237
       - published: 8002
         target: 8002
@@ -171,7 +173,7 @@ services:
   # # set different membership port than temporal-frontend
   # - FRONTEND_MEMBERSHIP_PORT=6936
   # - PROMETHEUS_ENDPOINT=0.0.0.0:8004
-  # - NUM_HISTORY_SHARDS=2048
+  # - NUM_HISTORY_SHARDS=${NUM_HISTORY_SHARDS}
   # - USE_INTERNAL_FRONTEND=true
   # - LOG_LEVEL=error
   # image: temporalio/server:${TEMPORAL_SERVER_IMG}
@@ -198,7 +200,7 @@ services:
       - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development.yaml
       - SERVICES=internal-frontend
       - PROMETHEUS_ENDPOINT=0.0.0.0:8007
-      - NUM_HISTORY_SHARDS=2048
+      - NUM_HISTORY_SHARDS=${NUM_HISTORY_SHARDS}
       - USE_INTERNAL_FRONTEND=true
       - LOG_LEVEL=error
     image: temporalio/server:${TEMPORAL_SERVER_IMG}
@@ -246,8 +248,8 @@ services:
       - temporal-frontend
       # - temporal-frontend2
     environment:
-      - TEMPORAL_CLI_ADDRESS=temporal-loadbalancing:7233
-      - TEMPORAL_ADDRESS=temporal-loadbalancing:7233
+      - TEMPORAL_CLI_ADDRESS=temporal-frontend:7237
+      - TEMPORAL_ADDRESS=temporal-frontend:7237
       - DB=postgres12
       - DB_PORT=${POSTGRES_DEFAULT_PORT}
       - POSTGRES_USER=${POSTGRES_USER}
@@ -255,7 +257,7 @@ services:
       - POSTGRES_SEEDS=postgresql
       - TEMPORAL_HOME=/etc/temporal
       # set to loadbalancing
-      - PUBLIC_FRONTEND_ADDRESS=temporal-loadbalancing:7233
+      - PUBLIC_FRONTEND_ADDRESS=temporal-frontend:7237
     image: temporalio/admin-tools:${TEMPORAL_SERVER_IMG}
     volumes:
       - "./script/setup.sh:/etc/temporal/setup.sh"
@@ -269,7 +271,7 @@ services:
     depends_on:
       - temporal-admin-tools
     environment:
-      - TEMPORAL_ADDRESS=temporal-loadbalancing:7233
+      - TEMPORAL_ADDRESS=temporal-frontend:7237
       - TEMPORAL_CORS_ORIGINS=http://localhost:3000
       - TEMPORAL_UI_PORT=8081
       - TEMPORAL_SHOW_TEMPORAL_SYSTEM_NAMESPACE=true
@@ -388,25 +390,25 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:rw
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
-  #envoy
-  temporal-loadbalancing:
-    <<: *logging
-    container_name: temporal-envoy
-    image: envoyproxy/envoy:${ENVOY_IMG}
-    ports:
-      - published: 7233
-        target: 7233
-      - published: 9901
-        target: 9901
-    volumes:
-      - type: bind
-        source: ./deployment/envoy/envoy.yaml
-        target: /etc/envoy/envoy.yaml
-    restart: always
-    depends_on:
-      - temporal-admin-tools
-      - temporal-frontend
-      # - temporal-frontend2
+  # #envoy
+  # temporal-loadbalancing:
+  # <<: *logging
+  # container_name: temporal-envoy
+  # image: envoyproxy/envoy:${ENVOY_IMG}
+  # ports:
+  # - published: 7233
+  # target: 7233
+  # - published: 9901
+  # target: 9901
+  # volumes:
+  # - type: bind
+  # source: ./deployment/envoy/envoy.yaml
+  # target: /etc/envoy/envoy.yaml
+  # restart: always
+  # depends_on:
+  # - temporal-admin-tools
+  # - temporal-frontend
+  # # - temporal-frontend2
 # nginx
 #  temporal-loadbalancing:
 #    <<: *logging
