@@ -258,6 +258,7 @@ services:
       - TEMPORAL_HOME=/etc/temporal
       # set to loadbalancing
       - PUBLIC_FRONTEND_ADDRESS=temporal-frontend:7237
+      - DEFAULT_NAMESPACE_RETENTION=${DEFAULT_NAMESPACE_RETENTION}
     image: temporalio/admin-tools:${TEMPORAL_SERVER_IMG}
     volumes:
       - "./script/setup.sh:/etc/temporal/setup.sh"
