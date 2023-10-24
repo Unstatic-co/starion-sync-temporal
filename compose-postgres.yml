@@ -4,24 +4,24 @@ services:
     container_name: temporal-postgresql
     command: postgres -c 'max_connections=200'
     environment:
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: ${POSTGRES_PWD}
       POSTGRES_USER: ${POSTGRES_USER}
     volumes:
-      - ./postgresql-data:/var/lib/postgresql/data
+      - /postgresql-data:/var/lib/postgresql/data
     image: postgres:${POSTGRES_IMG}
     ports:
       - 5432:5432
     restart: always
   postgres-exporter:
-  container_name: postgres-exporter
-  image: prometheuscommunity/postgres-exporter:${POSTGRES_EXPORTER_IMG}
-  environment:
-    - DATA_SOURCE_URI=postgresql:5432/postgres?sslmode=disable
-    - DATA_SOURCE_USER=${POSTGRES_USER}
-    - DATA_SOURCE_PASS=${POSTGRES_PASSWORD}
-    - PG_EXPORTER_INCLUDE_DATABASES=temporal,temporal_visibility
-  ports:
-    - "9187:9187"
+    container_name: postgres-exporter
+    image: prometheuscommunity/postgres-exporter:${POSTGRES_EXPORTER_IMG}
+    environment:
+      DATA_SOURCE_URI: postgresql:5432/postgres?sslmode=disable
+      DATA_SOURCE_USER: ${POSTGRES_USER}
+      DATA_SOURCE_PASS: ${POSTGRES_PWD}
+      PG_EXPORTER_INCLUDE_DATABASES: temporal,temporal_visibility
+    ports:
+      - "9187:9187"
   # pgadmin:
   # container_name: temporal-pgadmin
   # image: dpage/pgadmin4
