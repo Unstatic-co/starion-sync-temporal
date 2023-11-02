@@ -59,6 +59,9 @@ set -eux -o pipefail
 
 : "${SKIP_ADD_CUSTOM_SEARCH_ATTRIBUTES:=false}"
 
+: "${TLS_CERT_PATH:=}"
+: "${TLS_KEY_PATH:=}"
+
 # === Helper functions ===
 
 die() {
@@ -333,6 +336,12 @@ add_custom_search_attributes() {
 
 setup_server(){
     echo "Temporal CLI address: ${TEMPORAL_ADDRESS}."
+    # temporal env set address "${TEMPORAL_ADDRESS}"
+    # temporal env set namespace "${DEFAULT_NAMESPACE}"
+    # temporal env set local.tls true
+    # temporal env set local.tls-disable-host-verification true
+    # temporal env set local.tls-cert-path "${TLS_CERT_PATH}"
+    # temporal env set local.tls-key-path "${TLS_KEY_PATH}"
     until temporal operator cluster health | grep -q SERVING; do
         echo "Waiting for Temporal server to start..."
         sleep 3
