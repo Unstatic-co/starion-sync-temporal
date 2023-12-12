@@ -284,7 +284,7 @@ services:
     <<: *logging
     container_name: prometheus
     image: prom/prometheus:${PROMETHEUS_IMG}
-    command: --config.file=/etc/prometheus/prometheus.yml --log.level=error --storage.tsdb.retention.time=7d
+    command: --config.file=/etc/prometheus/prometheus.yml --log.level=info --storage.tsdb.retention.time=7d
     ports:
       - published: 9090
         target: 9090
@@ -333,64 +333,64 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /portainer-data:/data
+      - portainer-data:/data
     ports:
       - published: 9000
         target: 9000
-  jaeger-all-in-one:
-    image: jaegertracing/all-in-one:${JAEGER_IMG}
-    ports:
-      - published: 16686
-        target: 16686
-      - published: 14268
-        target: 14268
-      - published: 14250
-        target: 14250
-    environment:
-      - MEMORY_MAX_TRACES=1000
-  otel-collector:
-    image: otel/opentelemetry-collector:${OTEL_IMG}
-    command: ["--config=/etc/otel-collector-config.yaml"]
-    volumes:
-      - type: bind
-        source: ./deployment/otel/otel-config.yaml
-        target: /etc/otel-collector-config.yaml
-    ports:
-      - published: 1888
-        target: 1888
-      - published: 13133
-        target: 13133
-      - published: 4317
-        target: 4317
-      - published: 55670
-        target: 55670
-    depends_on:
-      - jaeger-all-in-one
-  loki:
-    container_name: loki
-    image: grafana/loki:${LOKI_IMG}
-    ports:
-      - published: 3100
-        target: 3100
-    command: -config.file=/etc/loki/local-config.yaml
-    volumes:
-      - type: bind
-        source: ./deployment/loki/local-config.yaml
-        target: /etc/loki/local-config.yaml
-    depends_on:
-      - grafana
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor-arm64:${CADVISOR_IMG}
-    container_name: cadvisor
-    ports:
-      - 9092:9092
-    command:
-      - "-port=9092"
-    volumes:
-      - /:/rootfs:ro
-      - /var/run/docker.sock:/var/run/docker.sock:rw
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
+  # jaeger-all-in-one:
+  # image: jaegertracing/all-in-one:${JAEGER_IMG}
+  # ports:
+  # - published: 16686
+  # target: 16686
+  # - published: 14268
+  # target: 14268
+  # - published: 14250
+  # target: 14250
+  # environment:
+  # - MEMORY_MAX_TRACES=1000
+  # otel-collector:
+  # image: otel/opentelemetry-collector:${OTEL_IMG}
+  # command: ["--config=/etc/otel-collector-config.yaml"]
+  # volumes:
+  # - type: bind
+  # source: ./deployment/otel/otel-config.yaml
+  # target: /etc/otel-collector-config.yaml
+  # ports:
+  # - published: 1888
+  # target: 1888
+  # - published: 13133
+  # target: 13133
+  # - published: 4317
+  # target: 4317
+  # - published: 55670
+  # target: 55670
+  # depends_on:
+  # - jaeger-all-in-one
+  # loki:
+  # container_name: loki
+  # image: grafana/loki:${LOKI_IMG}
+  # ports:
+  # - published: 3100
+  # target: 3100
+  # command: -config.file=/etc/loki/local-config.yaml
+  # volumes:
+  # - type: bind
+  # source: ./deployment/loki/local-config.yaml
+  # target: /etc/loki/local-config.yaml
+  # depends_on:
+  # - grafana
+  # cadvisor:
+  # image: gcr.io/cadvisor/cadvisor-arm64:${CADVISOR_IMG}
+  # container_name: cadvisor
+  # ports:
+  # - 9092:9092
+  # command:
+  # - "-port=9092"
+  # volumes:
+  # - /:/rootfs:ro
+  # - /var/run/docker.sock:/var/run/docker.sock:rw
+  # - /sys:/sys:ro
+  # - /var/lib/docker/:/var/lib/docker:ro
   # #envoy
   # temporal-loadbalancing:
   # <<: *logging
@@ -441,3 +441,5 @@ networks:
   default:
     external: true
     name: temporal-network
+volumes:
+  portainer-data:
