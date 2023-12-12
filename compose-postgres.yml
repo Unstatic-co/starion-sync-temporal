@@ -12,16 +12,16 @@ services:
     ports:
       - 5432:5432
     restart: always
-  postgres-exporter:
-    container_name: postgres-exporter
-    image: prometheuscommunity/postgres-exporter:${POSTGRES_EXPORTER_IMG}
-    environment:
-      DATA_SOURCE_URI: postgresql:5432/postgres?sslmode=disable
-      DATA_SOURCE_USER: ${POSTGRES_USER}
-      DATA_SOURCE_PASS: ${POSTGRES_PWD}
-      PG_EXPORTER_INCLUDE_DATABASES: temporal,temporal_visibility
-    ports:
-      - "9187:9187"
+  # postgres-exporter:
+  # container_name: postgres-exporter
+  # image: prometheuscommunity/postgres-exporter:${POSTGRES_EXPORTER_IMG}
+  # environment:
+  # DATA_SOURCE_URI: postgresql:5432/postgres?sslmode=disable
+  # DATA_SOURCE_USER: ${POSTGRES_USER}
+  # DATA_SOURCE_PASS: ${POSTGRES_PWD}
+  # PG_EXPORTER_INCLUDE_DATABASES: temporal,temporal_visibility
+  # ports:
+  # - "9187:9187"
   # pgadmin:
   # container_name: temporal-pgadmin
   # image: dpage/pgadmin4
