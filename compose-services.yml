@@ -28,6 +28,8 @@ services:
       #      - TEMPORAL_BROADCAST_ADDRESS=temporal-history
       - NUM_HISTORY_SHARDS=${NUM_HISTORY_SHARDS}
     image: temporalio/server:${TEMPORAL_SERVER_IMG}
+    expose:
+      - 8000
     ports:
       - published: 7234
         target: 7234
@@ -86,6 +88,8 @@ services:
       - USE_INTERNAL_FRONTEND=true
       - LOG_LEVEL=error
     image: temporalio/server:${TEMPORAL_SERVER_IMG}
+    expose:
+      - 8001
     ports:
       - published: 7235
         target: 7235
@@ -146,6 +150,7 @@ services:
     image: temporalio/server:${TEMPORAL_SERVER_IMG}
     expose:
       - 7237
+      - 8002
     ports:
       - published: 7233
         target: 7237
@@ -204,6 +209,8 @@ services:
       - USE_INTERNAL_FRONTEND=true
       - LOG_LEVEL=error
     image: temporalio/server:${TEMPORAL_SERVER_IMG}
+    expose:
+      - 8007
     ports:
       - published: 7231
         target: 7231
@@ -232,6 +239,8 @@ services:
       - USE_INTERNAL_FRONTEND=true
       - LOG_LEVEL=error
     image: temporalio/server:${TEMPORAL_SERVER_IMG}
+    expose:
+      - 8003
     ports:
       - published: 7232
         target: 7232
